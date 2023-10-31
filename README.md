@@ -1,6 +1,6 @@
 # Instagram AI Chatbot
 
-An Instagram bot focused on acting human, powered by ChatGPT and instagram-private-api.
+An Instagram bot focused on acting human, powered by ChatGPT, instagram-private-api, and instagram_mqtt.
 
 ## Installation
 
@@ -40,6 +40,7 @@ npm run start
 ## Todo
 
 - [x] Automatically respond to messages with ChatGPT.
+- [x] Integrate realtime message checking.
 - [ ] Handle messages from multiple people a little better.
 - [ ] Save conversations to disk.
 - [ ] Randomly share posts / reels.
