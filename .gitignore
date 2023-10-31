@@ -1,2 +1,5 @@
 .env
 node_modules
+config.json
+data.json
+login.json

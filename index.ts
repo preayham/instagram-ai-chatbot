@@ -1,11 +1,11 @@
 import "dotenv/config";
 import * as fs from "fs";
 
-import { login, filterThreads, getAndSend } from "./api/instagram";
+import { login, getAndSend, handleLatestMessage } from "./api/instagram";
 
 import config from "./config.json";
 
-import { clientHandle, intervalChecks, getSeconds, sleep } from "./util";
+import { clientHandle, intervalChecks, sleep } from "./util";
 
 const client = clientHandle(() => login({ client }));
 
@@ -22,29 +22,43 @@ const main = async () => {
     await client.state.deserialize(JSON.parse(isLogin));
   }
 
-  const foundThreads = await filterThreads({
-    client: client,
-    threads: config.threads,
+  let collectedThreads: { id: string; messages: string[] }[] = [];
+
+  console.log("Watching for messages.");
+  client.realtime.on("message", async (message) => {
+    const newThreads = await handleLatestMessage({
+      client,
+      message,
+      collectedThreads,
+    });
+
+    if (newThreads) {
+      collectedThreads = newThreads;
+    }
   });
 
-  for (const thread of config.threads) {
-    let index = 0;
+  await client.realtime.connect({
+    irisData: await client.feed.directInbox().request(),
+  });
 
-    do {
-      const sent = await getAndSend({
-        client,
-        focusedThread: foundThreads[config.threads.indexOf(thread)],
-        thread,
-      }).catch(() => {});
+  while (true) {
+    if (collectedThreads.length > 0) {
+      collectedThreads.forEach(async (thread) => {
+        await getAndSend({
+          client,
+          thread: thread.id,
+          allMessages: thread.messages,
+        });
 
-      if (sent) index = 0;
-      if (!sent) ++index;
+        collectedThreads = collectedThreads.filter(
+          (item) => item.id !== thread.id
+        );
 
-      const seconds = getSeconds({ index });
+        console.log("\nWatching for messages.");
+      });
+    }
 
-      console.log(`waiting ${seconds} seconds...`);
-      await sleep({ seconds: seconds });
-    } while (true);
+    await sleep({ seconds: 10 });
   }
 };
 

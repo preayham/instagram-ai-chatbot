@@ -1,51 +1,31 @@
-import { DirectThreadFeed, IgApiClient } from "instagram-private-api";
+import { IgApiClientRealtime } from "instagram_mqtt";
 import { getResponse } from "../openai";
-import { loadData, saveData } from "../../util";
 
+import { loadData, saveData } from "../../util";
 import sendMessage from "./sendMessage";
-import getLatestMessage from "./getLatestMessage";
 
 interface GetAndSendProps {
-  client: IgApiClient;
-  focusedThread: DirectThreadFeed;
+  client: IgApiClientRealtime;
   thread: string;
+  allMessages: string[];
 }
 
-let lastTimestamp: number;
-const getAndSend = async ({
-  client,
-  focusedThread,
-  thread,
-}: GetAndSendProps) => {
-  process.stdout.write("Checking for messages, ");
+const getAndSend = async ({ client, thread, allMessages }: GetAndSendProps) => {
+  let messagesCombined = "";
+  allMessages.forEach((message) => {
+    let last = false;
+    if (allMessages.indexOf(message) == message.length - 1) last = true;
 
-  const { combinedMessages: latestMessage, latestTimestamp } =
-    await getLatestMessage({
-      client: client,
-      thread: focusedThread,
-      username: process.env.IG_USERNAME,
-    });
+    messagesCombined += message + (!last ? ", " : "");
+  });
 
-  if (!latestMessage) {
-    return false;
-  }
-
-  if (!lastTimestamp) {
-    lastTimestamp = latestTimestamp;
-
-    return false;
-  }
-
-  if (latestTimestamp == lastTimestamp) return;
-  lastTimestamp = latestTimestamp;
-
-  process.stdout.write(`read message: ${latestMessage}, `);
+  console.log(`\nGenerating response for compiled messages: \n${allMessages}`);
 
   const { messages } = loadData();
 
   messages.push({
     role: "user",
-    content: latestMessage,
+    content: messagesCombined,
   });
 
   const response = await getResponse({ messages: messages });
@@ -55,7 +35,7 @@ const getAndSend = async ({
     content: response,
   });
 
-  process.stdout.write(`sending message: ${response}, `);
+  console.log(`\nSending response: \n${response}.`);
 
   saveData({ messages: messages, lastTimestamp: new Date().getTime() });
 

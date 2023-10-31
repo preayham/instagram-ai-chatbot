@@ -1,7 +1,6 @@
 import login from "./login";
 import sendMessage from "./sendMessage";
-import filterThreads from "./filterThreads";
-import getLatestMessage from "./getLatestMessage";
 import getAndSend from "./getAndSend";
+import handleLatestMessage from "./handleLatestMessage";
 
-export { login, sendMessage, filterThreads, getLatestMessage, getAndSend };
+export { login, sendMessage, getAndSend, handleLatestMessage };

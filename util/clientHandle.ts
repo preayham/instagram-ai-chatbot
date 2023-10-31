@@ -1,4 +1,6 @@
 import { IgApiClient } from "instagram-private-api";
+import { withRealtime } from "instagram_mqtt";
+
 import * as fs from "fs";
 import saveData from "./saveData";
 
@@ -8,7 +10,7 @@ const clientHandle = (callback: () => void) => {
     lastTimestamp: null,
   });
 
-  const client = new IgApiClient();
+  const client = withRealtime(new IgApiClient());
 
   client.request.end$.subscribe(async () => {
     const serialized = await client.state.serialize();
