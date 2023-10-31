@@ -14,12 +14,14 @@ const getAndSend = async ({ client, thread, allMessages }: GetAndSendProps) => {
   let messagesCombined = "";
   allMessages.forEach((message) => {
     let last = false;
-    if (allMessages.indexOf(message) == message.length - 1) last = true;
+    if (allMessages.indexOf(message) == allMessages.length - 1) last = true;
 
     messagesCombined += message + (!last ? ", " : "");
   });
 
-  console.log(`\nGenerating response for compiled messages: \n${allMessages}`);
+  console.log(
+    `\nGenerating response for compiled messages: \n${messagesCombined}`
+  );
 
   const { messages } = loadData();
 

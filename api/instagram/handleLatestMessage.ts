@@ -1,5 +1,7 @@
 import { IgApiClientRealtime, MessageSyncMessageWrapper } from "instagram_mqtt";
 
+import config from "../../config.json";
+
 interface HandleLatestMessageProps {
   client: IgApiClientRealtime;
   message: MessageSyncMessageWrapper;
@@ -11,6 +13,11 @@ const handleLatestMessage = async ({
   message,
   collectedThreads,
 }: HandleLatestMessageProps) => {
+  const isValid = config.threads.find(
+    (thread) => thread === message.message.thread_id
+  );
+  if (!isValid) return null;
+
   if (message.message.item_type !== "text" || message.message.text.length < 2)
     return null;
 

@@ -12,7 +12,12 @@ const client = clientHandle(() => login({ client }));
 const main = async () => {
   intervalChecks({ prompt: config.prompt });
 
-  const isLogin = fs.readFileSync("./login.json", "utf-8");
+  let isLogin: string;
+  try {
+    isLogin = fs.readFileSync("./login.json", "utf-8");
+  } catch {
+    fs.writeFileSync("./login.json", "");
+  }
 
   if (!isLogin) {
     await login({ client }).catch(() => {});
@@ -22,7 +27,7 @@ const main = async () => {
     await client.state.deserialize(JSON.parse(isLogin));
   }
 
-  console.log("Watching for messages.");
+  console.log(`Watching for messages. (${config.waitTime} seconds)`);
 
   let collectedThreads: { id: string; messages: string[] }[] = [];
   client.realtime.on("message", async (message) => {
@@ -54,11 +59,11 @@ const main = async () => {
           (item) => item.id !== thread.id
         );
 
-        console.log("\nWatching for messages.");
+        console.log(`\nWatching for messages. (${config.waitTime} seconds)`);
       });
     }
 
-    await sleep({ seconds: 10 });
+    await sleep({ seconds: config.waitTime });
   }
 };
 
