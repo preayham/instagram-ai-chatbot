@@ -22,7 +22,7 @@ IG_PASSWORD=appleseed
 OPENAI_KEY=OPENAI_API_KEY
 ```
 
-2. Add the prompt and all threads to the `config.json`.
+2. Create a `config.json`.
 
 ```json
 {
