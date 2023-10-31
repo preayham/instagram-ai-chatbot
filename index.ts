@@ -22,9 +22,9 @@ const main = async () => {
     await client.state.deserialize(JSON.parse(isLogin));
   }
 
-  let collectedThreads: { id: string; messages: string[] }[] = [];
-
   console.log("Watching for messages.");
+
+  let collectedThreads: { id: string; messages: string[] }[] = [];
   client.realtime.on("message", async (message) => {
     const newThreads = await handleLatestMessage({
       client,
