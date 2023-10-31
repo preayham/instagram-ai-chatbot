@@ -49,15 +49,15 @@ const main = async () => {
   while (true) {
     if (collectedThreads.length > 0) {
       collectedThreads.forEach(async (thread) => {
+        collectedThreads = collectedThreads.filter(
+          (item) => item.id !== thread.id
+        );
+
         await getAndSend({
           client,
           thread: thread.id,
           allMessages: thread.messages,
         });
-
-        collectedThreads = collectedThreads.filter(
-          (item) => item.id !== thread.id
-        );
 
         console.log(`\nWatching for messages. (${config.waitTime} seconds)`);
       });
