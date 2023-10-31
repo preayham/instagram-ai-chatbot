@@ -6,7 +6,7 @@ An Instagram bot focused on acting human, powered by ChatGPT and instagram-priva
 
 ```shell
 # clone repository
-git clone GITURLHERE
+git clone https://github.com/ayhamtwam/instagram-ai-chatbot.git
 
 # install modules
 npm install
