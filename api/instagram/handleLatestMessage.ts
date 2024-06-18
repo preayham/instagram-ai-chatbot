@@ -13,10 +13,11 @@ const handleLatestMessage = async ({
   message,
   collectedThreads,
 }: HandleLatestMessageProps) => {
-  const isValid = config.threads.find(
-    (thread) => thread === message.message.thread_id
-  );
-  if (!isValid) return null;
+  if (config.threads) {
+    const isWhiteListed = config.threads.find((thread) => thread === message.message.thread_id);
+
+    if (!isWhiteListed) return null;
+  }
 
   if (message.message.item_type !== "text" || message.message.text.length < 2)
     return null;
