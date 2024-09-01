@@ -32,7 +32,7 @@ OPENAI_KEY=OPENAI_API_KEY
 }
 ```
 
-2.5. Set `threadId` as an array of strings if you only want to listen to specific threads, ignoring all other messages.
+2.5. Set `threads` as an array of strings if you only want to listen to specific threads, ignoring all other messages.
 
 ```json
 {
